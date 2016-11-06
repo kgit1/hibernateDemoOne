@@ -2,6 +2,8 @@ package com.luv2code.hibernate.demo.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -12,6 +14,9 @@ public class Student {
 	
 	//means primary key for database
 	@Id
+	//defines generation strategy for our id if we want
+	//to change default primary key generation strategy
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	//mark and name column
 	@Column(name="id")
 	private int id;
