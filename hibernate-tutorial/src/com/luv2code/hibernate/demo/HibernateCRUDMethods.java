@@ -28,7 +28,8 @@ public class HibernateCRUDMethods {
 		// create session factory
 		// if configure() is empty -
 		// will use default "hibernate.cfg.xml" from src root
-		SessionFactory factory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Student.class)
+		SessionFactory factory = new Configuration()
+				.configure("hibernate.cfg.xml").addAnnotatedClass(Student.class)
 				.buildSessionFactory();
 
 		// create session
@@ -39,7 +40,8 @@ public class HibernateCRUDMethods {
 
 			// create a student object
 			System.out.println("Creating new student object...");
-			Student tempStudent = new Student("Daffy", "Duck", "daffy@luv2code.com");
+			Student tempStudent = new Student("Daffy", "Duck",
+					"daffy@luv2code.com");
 
 			// start a transaction
 			session.beginTransaction();
@@ -56,14 +58,16 @@ public class HibernateCRUDMethods {
 			// read object
 
 			// find out the student's id: primary key
-			System.out.println("Saved student. Generated id: " + tempStudent.getId());
+			System.out.println(
+					"Saved student. Generated id: " + tempStudent.getId());
 
 			// get a new session and start transaction
 			session = factory.getCurrentSession();
 			session.beginTransaction();
 
 			// retrieve student based on the id: primary key
-			System.out.println("\nGetting student with id: " + tempStudent.getId());
+			System.out.println(
+					"\nGetting student with id: " + tempStudent.getId());
 
 			Student myStudent = session.get(Student.class, tempStudent.getId());
 
@@ -83,8 +87,14 @@ public class HibernateCRUDMethods {
 
 			System.out.println("==========");
 			printAllRows(factory, "Student");
+
+//			rewriteTable(factory, "Student");
+
+			updateStudentById(factory, 14);
 			
-			rewriteTable(factory, "Student");
+			updateStudentAllEmail(factory);
+			
+//			deleteStudentAll(factory);
 
 			System.out.println("Done!");
 		} finally {
@@ -131,9 +141,6 @@ public class HibernateCRUDMethods {
 		try {
 			session.beginTransaction();
 			list = session.createQuery("from " + table).getResultList();
-			// for (Student student : list) {
-			// System.out.println(student);
-			// }
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
@@ -169,7 +176,7 @@ public class HibernateCRUDMethods {
 
 	static void saveListToDb(SessionFactory factory, List<Student> list) {
 		Session session = factory.getCurrentSession();
-//		list = populateList();
+		// list = populateList();
 		try {
 			session.beginTransaction();
 			for (Student student : list) {
@@ -188,7 +195,7 @@ public class HibernateCRUDMethods {
 		System.out.println("*********************************************");
 		for (Student student : list) {
 			System.out.println(student);
-//			student.setId(0);
+			// student.setId(0);
 			System.out.println(student);
 		}
 		System.out.println("STUDENTS AFTER");
@@ -201,6 +208,64 @@ public class HibernateCRUDMethods {
 		printAllRows(factory, table);
 	}
 
+	public static List<Student> readByName(Session session, String name) {
+		List<Student> theStudents = session
+				.createQuery("from Student s where s.firstName='" + name + "'")
+				.getResultList();
+		return theStudents;
+	}
+
+	public static List<Student> readByNameOrEmail(Session session, String name,
+			String email) {
+		List<Student> theStudents = session
+				.createQuery("from Student s where s.firstName='" + name
+						+ "' or s.email='" + email + "'")
+				.getResultList();
+		return theStudents;
+	}
+
+	public static List<Student> readByNameAndEmailWildcard(Session session,
+			String name, String emailWild) {
+		List<Student> theStudents4 = session
+				.createQuery("from Student s where s.firstName='" + name
+						+ "' or s.email like '" + emailWild + "'")
+				.getResultList();
+		return theStudents4;
+	}
+
+	static void updateStudentAllEmail(SessionFactory factory) {
+		Session session = factory.getCurrentSession();
+		session.beginTransaction();
+		session.createQuery("update Student set email='foo@yahoo.com'")
+				.executeUpdate();
+		session.getTransaction().commit();
+	}
+
+	static void updateStudentById(SessionFactory factory, int id) {
+		Session session = factory.getCurrentSession();
+		session.beginTransaction();
+		session.createQuery(
+				"update Student set firstName='Patric' where id=" + id)
+				.executeUpdate();
+		session.getTransaction().commit();
+	}
+
+	static void deleteStudentById(SessionFactory factory, int id) {
+		Session session = factory.getCurrentSession();
+		session.beginTransaction();
+		session.createQuery("delete from Student where id=" + id)
+				.executeUpdate();
+		session.getTransaction().commit();
+	}
+	
+	static void deleteStudentAll(SessionFactory factory) {
+		Session session = factory.getCurrentSession();
+		session.beginTransaction();
+		session.createQuery("delete Student")
+				.executeUpdate();
+		session.getTransaction().commit();
+	}
+
 	static List<Student> populateList() {
 		List<Student> list = new ArrayList<Student>();
 		list.add(new Student("Daffy", "Duck", "daffy@luv2code.com"));
@@ -210,6 +275,7 @@ public class HibernateCRUDMethods {
 		list.add(new Student("Marry", "Public", "republic@yahoo.com"));
 		list.add(new Student("Nika", "Props", "popoil@gmail.com"));
 		list.add(new Student("Betany", "Rodrigo", "goom@luv2code.com"));
+		list.add(new Student("White", "Deg", "winnie@gmail.com"));
 		return list;
 	}
 }
