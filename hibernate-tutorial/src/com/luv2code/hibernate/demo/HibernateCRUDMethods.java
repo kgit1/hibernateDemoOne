@@ -88,13 +88,13 @@ public class HibernateCRUDMethods {
 			System.out.println("==========");
 			printAllRows(factory, "Student");
 
-//			rewriteTable(factory, "Student");
+			// rewriteTable(factory, "Student");
 
 			updateStudentById(factory, 14);
-			
+
 			updateStudentAllEmail(factory);
-			
-//			deleteStudentAll(factory);
+
+			// deleteStudentAll(factory);
 
 			System.out.println("Done!");
 		} finally {
@@ -257,12 +257,11 @@ public class HibernateCRUDMethods {
 				.executeUpdate();
 		session.getTransaction().commit();
 	}
-	
+
 	static void deleteStudentAll(SessionFactory factory) {
 		Session session = factory.getCurrentSession();
 		session.beginTransaction();
-		session.createQuery("delete Student")
-				.executeUpdate();
+		session.createQuery("delete Student").executeUpdate();
 		session.getTransaction().commit();
 	}
 
